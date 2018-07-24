@@ -1,6 +1,6 @@
 package main
 
-import "github.com/motionwerkGmbH/cpo-backend-api/handlers"
+import "github.com/motionwerkGmbH/msp-backend-api/handlers"
 
 func InitializeRoutes() {
 
@@ -54,39 +54,6 @@ func InitializeRoutes() {
 		// Stations // EVSEs // Connectors
 		v1.GET("/msp/locations", handlers.MspGetLocations)
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~ CPO ~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		//gets all the info about an cpo
-		v1.GET("/cpo", handlers.CpoInfo)
-
-		//creates in the database a new cpo
-		v1.POST("/cpo", handlers.CpoCreate)
-
-		//generate a new wallet for the cpo
-		v1.POST("/cpo/wallet/generate", handlers.CpoGenerateWallet)
-
-		//displays the mnemonic seed for the msp
-		v1.GET("/cpo/wallet/seed", handlers.CpoGetSeed)
-
-		//gets the MSP history of transactions
-		v1.GET("/cpo/history", handlers.CpoHistory)
-
-		//upload new locations
-		v1.GET("/cpo/locations", handlers.CpoGetLocations)
-
-		//upload new locations
-		v1.PUT("/cpo/locations", handlers.CpoPutLocations)
-
-		//add one location
-		v1.POST("/cpo/location", handlers.CpoPostLocation)
-
-		//delete a location
-		v1.DELETE("/cpo/location/:locationid", handlers.CpoDeleteLocation)
-
-		//add one evse
-		v1.POST("/cpo/evse", handlers.CpoPostEvse)
 	}
 
 }

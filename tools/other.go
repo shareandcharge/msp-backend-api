@@ -12,7 +12,7 @@ import (
 	"encoding/json"
 )
 
-//read the config file, helper function
+// read the config file, helper function
 func ReadConfig(filename string, defaults map[string]interface{}) (*viper.Viper, error) {
 	v := viper.New()
 	for key, value := range defaults {

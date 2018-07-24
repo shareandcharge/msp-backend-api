@@ -5,8 +5,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/motionwerkGmbH/cpo-backend-api/configs"
-	"github.com/motionwerkGmbH/cpo-backend-api/tools"
+	"github.com/motionwerkGmbH/msp-backend-api/configs"
+	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"net/http"
 	"strconv"
 	"time"
@@ -37,8 +37,8 @@ func main() {
 	tools.Connect("_theDb.db")
 
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-	log.Println("Running on http://localhost:9090/api/v1/account/info")
-	log.Println("Running on http://18.195.223.26:9090/api/v1/account/info")
+	log.Println("Running on http://localhost:9090/api/")
+	log.Println("Running on http://18.195.223.26:9090/api/")
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 	// Serve 'em...

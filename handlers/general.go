@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/motionwerkGmbH/cpo-backend-api/tools"
+	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	log "github.com/Sirupsen/logrus"
 	"encoding/json"
 	"strconv"
@@ -131,20 +131,6 @@ func TokenMint(c *gin.Context) {
 func Reinit(c *gin.Context) {
 
 	var schema = `
-	DROP TABLE IF EXISTS cpo;
-	CREATE TABLE cpo (
-			cpo_id    INTEGER PRIMARY KEY,
-    		wallet VARCHAR(80)  DEFAULT '',
-    		seed  VARCHAR(250)  DEFAULT '',
-			name      VARCHAR(250) DEFAULT '',
-			address_1      VARCHAR(250) DEFAULT '',
-			address_2      VARCHAR(250) DEFAULT '',
-			town      VARCHAR(250) DEFAULT '',
-			postcode      VARCHAR(250) DEFAULT '',
-			mail_address      VARCHAR(250) DEFAULT '',
-			website      VARCHAR(250) DEFAULT '',
-			vat_number      VARCHAR(250) DEFAULT ''
-		);
 	DROP TABLE IF EXISTS msp;
 	CREATE TABLE msp (
 			msp_id    INTEGER PRIMARY KEY,

@@ -2,7 +2,6 @@ package tools
 
 import "time"
 
-
 type Connector struct {
 	ID          string    `json:"id"`
 	Standard    string    `json:"standard"`
