@@ -73,7 +73,7 @@ func TokenInfo(c *gin.Context) {
 		Address string `json:"address"`
 		Owner   string `json:"owner"`
 	}
-	body := tools.GetRequest2("http://localhost:3000/api/token/info")
+	body := tools.GetRequest("http://localhost:3000/api/token/info")
 
 	var tokenInfo = new(TokenInfo)
 	err := json.Unmarshal(body, &tokenInfo)
