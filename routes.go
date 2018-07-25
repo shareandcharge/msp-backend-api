@@ -51,9 +51,6 @@ func InitializeRoutes() {
 		//gets the MSP history of transactions
 		v1.GET("/msp/history", handlers.MSPHistory)
 
-		// Stations // EVSEs // Connectors
-		v1.GET("/msp/locations", handlers.MspGetLocations)
-
 	}
 
 }
