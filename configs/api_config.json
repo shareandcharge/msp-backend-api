@@ -1,9 +1,0 @@
-{
-  "port" : 9090,
-  "hostname" : "0.0.0.0",
-  "environment": "debug",
-  "msp": {
-    "wallet_address": "0xf60b71a4d360a42ec9d4e7977d8d9928fd7c8365",
-    "wallet_seed": "moon another kind random mask like swarm type ostrich amused rice castle"
-  }
-}
