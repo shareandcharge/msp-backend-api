@@ -7,12 +7,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"time"
 	"context"
-	"math/rand"
 	"bytes"
 	"encoding/json"
 )
 
-// read the config file, helper function
+//read the config file, helper function
 func ReadConfig(filename string, defaults map[string]interface{}) (*viper.Viper, error) {
 	v := viper.New()
 	for key, value := range defaults {
@@ -25,15 +24,15 @@ func ReadConfig(filename string, defaults map[string]interface{}) (*viper.Viper,
 	return v, err
 }
 
-// a general get request with 100 seconds timeout
-func GetRequest(url string) []byte {
+// a general get request with 200 seconds timeout (yep, 200!)
+func GETRequest(url string) []byte {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Panicf("%v", err)
 		return nil
 	}
 
-	ctx, cancel := context.WithTimeout(req.Context(), 100*time.Second)
+	ctx, cancel := context.WithTimeout(req.Context(), 200*time.Second)
 	defer cancel()
 
 	req = req.WithContext(ctx)
@@ -52,7 +51,64 @@ func GetRequest(url string) []byte {
 }
 
 //general POST request
-func PostJsonRequest(url string, jsonMap map[string]interface{}) ([]byte, error) {
+//TODO: if not working check git history
+func POSTRequest(url string, payload []byte) ([]byte, error) {
+
+
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		log.Panicf("%v", err)
+		return nil, err
+	}
+
+	if contents, err := ioutil.ReadAll(resp.Body); err == nil {
+		return contents, nil
+	}
+	return nil, err
+}
+
+// general PUT request
+func PUTRequest(url string, payload []byte) ([]byte, error) {
+
+	req, err := http.NewRequest(http.MethodPut, url,  bytes.NewBuffer(payload))
+	if err != nil {
+		log.Panicf("%v", err)
+		return nil, err
+	}
+
+	if contents, err := ioutil.ReadAll(req.Body); err == nil {
+		return contents, nil
+	}
+	return nil, err
+}
+
+// general DELETE request
+func DELETERequest(url string) ([]byte, error) {
+
+	// Create client
+	client := &http.Client{}
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if contents, err := ioutil.ReadAll(req.Body); err == nil {
+		return contents, nil
+	}
+	return nil, err
+
+}
+
+
+//general POST request
+func POSTJsonRequest(url string, jsonMap map[string]interface{}) ([]byte, error) {
 
 	jsonValue, err := json.Marshal(jsonMap)
 	if err != nil {
@@ -76,17 +132,6 @@ func PostJsonRequest(url string, jsonMap map[string]interface{}) ([]byte, error)
 	}
 
 	return b, nil
-}
-
-// Generate a Random String of length n
-func RandStringRunes(n int) string {
-	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
-	rand.Seed(time.Now().UnixNano())
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
 }
 
 // quick function to check for an error and, optionally terminate the program

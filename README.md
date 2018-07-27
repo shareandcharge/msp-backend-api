@@ -4,30 +4,9 @@ For any questions, please ask :)
 
 ## Usage Guide :crystal_ball:
 
-#### The API is available at: 18.195.223.26:9090
-located on AWS with the instance-id: i-0c20e24f744da7c2a and the name: cpo backend api
+#### REST Endpoints
 
-Quick test: <a href="http://18.195.223.26:9090/api/v1/">Click ME!</a>
-
-if you get "This site can’t be reached" this means, probably, I stopped it for some reason. Ask me on slack why it's stopped. (Andy) :palm_tree:
-
-
-~~~~
-[GIN-debug] GET    /api/v1/                  --> github.com/motionwerkGmbH/msp-backend-api/handlers.Index (3 handlers)
-[GIN-debug] DELETE /api/v1/s3cr3tReinitf32fdsfsdf98yu32jlkjfsd89yaf98j320j --> github.com/motionwerkGmbH/msp-backend-api/handlers.Reinit (3 handlers)
-[GIN-debug] GET    /api/v1/token/info        --> github.com/motionwerkGmbH/msp-backend-api/handlers.TokenInfo (3 handlers)
-[GIN-debug] GET    /api/v1/token/balance/:addr --> github.com/motionwerkGmbH/msp-backend-api/handlers.TokenBalance (3 handlers)
-[GIN-debug] POST   /api/v1/token/mint/:addr  --> github.com/motionwerkGmbH/msp-backend-api/handlers.TokenMint (3 handlers)
-[GIN-debug] GET    /api/v1/wallet/:addr      --> github.com/motionwerkGmbH/msp-backend-api/handlers.GetWalletBalance (3 handlers)
-[GIN-debug] GET    /api/v1/drivers           --> github.com/motionwerkGmbH/msp-backend-api/handlers.GetAllDrivers (3 handlers)
-[GIN-debug] GET    /api/v1/msp               --> github.com/motionwerkGmbH/msp-backend-api/handlers.MspInfo (3 handlers)
-[GIN-debug] POST   /api/v1/msp               --> github.com/motionwerkGmbH/msp-backend-api/handlers.MspCreate (3 handlers)
-[GIN-debug] POST   /api/v1/msp/wallet/generate --> github.com/motionwerkGmbH/msp-backend-api/handlers.MspGenerateWallet (3 handlers)
-[GIN-debug] GET    /api/v1/msp/wallet/seed   --> github.com/motionwerkGmbH/msp-backend-api/handlers.MspGetSeed (3 handlers)
-[GIN-debug] GET    /api/v1/msp/history       --> github.com/motionwerkGmbH/msp-backend-api/handlers.MSPHistory (3 handlers)
-[GIN-debug] GET    /api/v1/msp/locations     --> github.com/motionwerkGmbH/msp-backend-api/handlers.MspGetLocations (3 handlers)
-~~~~
-
+Please ask me (Andy) for the latest POSTMAN collection.
 
 ## Install Guide :sun_with_face:
 

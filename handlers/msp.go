@@ -54,7 +54,6 @@ func MspCreate(c *gin.Context) {
 //returns the info for the MSP
 func MspInfo(c *gin.Context) {
 
-
 	rows, _ := tools.DB.Query("SELECT msp_id FROM msp")
 	defer rows.Close()
 
@@ -70,10 +69,8 @@ func MspInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, msp)
 }
 
-
 //returns the info for the MSP
 func MspGetSeed(c *gin.Context) {
-
 
 	msp := tools.MSP{}
 	tools.DB.QueryRowx("SELECT * FROM msp LIMIT 1").StructScan(&msp)
@@ -87,14 +84,15 @@ func MspGetSeed(c *gin.Context) {
 }
 
 //generates a new wallet for the msp
-func MspGenerateWallet(c *gin.Context){
+func MspGenerateWallet(c *gin.Context) {
 
 	type WalletInfo struct {
-		Seed   string `json:"seed"`
+		Seed string `json:"seed"`
 		Addr string `json:"address"`
 	}
 	var walletInfo WalletInfo
 
+	// Leave this commented code here please
 	//body := tools.GetRequest("http://localhost:3000/api/wallet/create")
 	//log.Printf("<- %s", string(body))
 	//err := json.Unmarshal(body, &walletInfo)
@@ -109,11 +107,9 @@ func MspGenerateWallet(c *gin.Context){
 	walletInfo.Seed = config.GetString("msp.wallet_seed")
 
 	//update the db for MSP
-
 	query := "UPDATE msp SET wallet='%s', seed='%s' WHERE msp_id = 1"
 	command := fmt.Sprintf(query, walletInfo.Addr, walletInfo.Seed)
 	tools.DB.MustExec(command)
-
 
 	//update the ~/.sharecharge/config.json
 	configs.UpdateBaseAccountSeedInSCConfig(walletInfo.Seed)
@@ -121,48 +117,24 @@ func MspGenerateWallet(c *gin.Context){
 	c.JSON(http.StatusOK, walletInfo)
 }
 
-
 //Gets the history for the MSP
 //TODO: make it real
 func MSPHistory(c *gin.Context) {
 
-
 	type History struct {
-		Amount float64      `json:"amount"`
-		Currency string `json:"currency"`
-		Timestamp string `json:"timestamp"`
+		Amount    float64 `json:"amount"`
+		Currency  string  `json:"currency"`
+		Timestamp string  `json:"timestamp"`
 	}
 
 	s1 := rand.NewSource(1337)
 	r1 := rand.New(s1)
 
 	var histories []History
-	for i := 0; i<100 ;i++ {
-		n := History{Amount:  math.Floor(r1.Float64() * 10000) / 10000, Currency: "MSP Tokens", Timestamp:  "01.04.2018 "+strconv.Itoa(10+r1.Intn(23))+":"+strconv.Itoa(10+r1.Intn(49))+":" + strconv.Itoa(10+r1.Intn(49))}
-		histories = append(histories,n)
+	for i := 0; i < 100; i++ {
+		n := History{Amount: math.Floor(r1.Float64()*10000) / 10000, Currency: "MSP Tokens", Timestamp: "01.04.2018 " + strconv.Itoa(10+r1.Intn(23)) + ":" + strconv.Itoa(10+r1.Intn(49)) + ":" + strconv.Itoa(10+r1.Intn(49))}
+		histories = append(histories, n)
 	}
 
-
-
 	c.JSON(http.StatusOK, histories)
-}
-
-//gets all locations of this MSP
-//TODO: FIRST GET ALL CPOS
-func MspGetLocations(c *gin.Context) {
-
-	//config := configs.Load()
-	//cpoAddress := config.GetString("cpo.wallet_address")
-	//body := tools.GetRequest("http://localhost:3000/api/store/locations/"+cpoAddress)
-	//
-	//var stationInfo []tools.Location
-	//err := json.Unmarshal(body, &stationInfo)
-	//if err != nil {
-	//	log.Panic(err)
-	//	c.JSON(http.StatusInternalServerError, gin.H{"error": "ops! it's our fault. This error should never happen."})
-	//	return
-	//}
-	//c.JSON(http.StatusOK, stationInfo)
-	c.JSON(http.StatusInternalServerError, gin.H{"error": "I need to redo this endpoint. Under construction"})
-
 }

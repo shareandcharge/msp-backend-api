@@ -31,7 +31,6 @@ func InitializeRoutes() {
 		//returns a list of all EV Drivers with their details & balances
 		v1.GET("/drivers", handlers.GetAllDrivers)
 
-
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~ MSP ~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

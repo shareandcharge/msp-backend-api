@@ -22,7 +22,7 @@ func GetWalletBalance(c *gin.Context) {
 		Balance string `json:"balance"`
 	}
 
-	body := tools.GetRequest("http://localhost:3000/api/wallet/balance/" + addr)
+	body := tools.GETRequest("http://localhost:3000/api/wallet/balance/" + addr)
 
 	var tBalance = new(TBalance)
 	err := json.Unmarshal(body, &tBalance)
@@ -54,7 +54,7 @@ func GetAllDrivers(c *gin.Context){
 	for _, driver := range driversList   {
 		driver.Token = "S&C Token" //TODO: attention, it's hardcoded
 
-		body := tools.GetRequest("http://localhost:3000/api/token/balance/" + driver.Address)
+		body := tools.GETRequest("http://localhost:3000/api/token/balance/" + driver.Address)
 		balanceFloat, _ := strconv.ParseFloat(string(body), 64)
 		driver.Balance = balanceFloat
 
@@ -73,7 +73,7 @@ func TokenInfo(c *gin.Context) {
 		Address string `json:"address"`
 		Owner   string `json:"owner"`
 	}
-	body := tools.GetRequest("http://localhost:3000/api/token/info")
+	body := tools.GETRequest("http://localhost:3000/api/token/info")
 
 	var tokenInfo = new(TokenInfo)
 	err := json.Unmarshal(body, &tokenInfo)
@@ -91,7 +91,7 @@ func TokenBalance(c *gin.Context) {
 	addr := c.Param("addr")
 	log.Printf("getting token balance for %s", addr)
 
-	body := tools.GetRequest("http://localhost:3000/api/token/balance/" + addr)
+	body := tools.GETRequest("http://localhost:3000/api/token/balance/" + addr)
 
 	log.Printf("Balance is %s", body)
 	balanceFloat, _ := strconv.ParseFloat(string(body), 64)
@@ -116,7 +116,7 @@ func TokenMint(c *gin.Context) {
 
 	values := map[string]interface{}{"driver": addr, "amount": amountFloat}
 
-	_, err := tools.PostJsonRequest("http://localhost:3000/api/token/mint", values)
+	_, err := tools.POSTJsonRequest("http://localhost:3000/api/token/mint", values)
 	if err != nil {
 		log.Panic(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})

@@ -16,10 +16,8 @@ var router *gin.Engine
 
 func main() {
 
-	// Configs
 	Config := configs.Load()
 
-	// Gin Configuration
 	if (Config.GetString("environment")) == "debug" {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -37,15 +35,15 @@ func main() {
 	tools.Connect("_theDb.db")
 
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-	log.Println("Running on http://18.195.223.26:9090/api/v1")
+	log.Println("~~~~~~~~~~~~~~~~~~ MSP BACKEND RUNNING ~~~~~~~~~~~~~~~~~")
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 	// Serve 'em...
 	server := &http.Server{
 		Addr:           Config.GetString("hostname") + ":" + strconv.Itoa(Config.GetInt("port")),
 		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		ReadTimeout:    200 * time.Second,
+		WriteTimeout:   200 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	server.SetKeepAlivesEnabled(false)
