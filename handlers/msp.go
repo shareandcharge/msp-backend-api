@@ -7,9 +7,6 @@ import (
 	"fmt"
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"github.com/motionwerkGmbH/msp-backend-api/configs"
-	"math/rand"
-	"math"
-	"strconv"
 )
 
 func MspCreate(c *gin.Context) {
@@ -118,23 +115,31 @@ func MspGenerateWallet(c *gin.Context) {
 }
 
 //Gets the history for the MSP
-//TODO: make it real
 func MSPHistory(c *gin.Context) {
 
 	type History struct {
-		Amount    float64 `json:"amount"`
-		Currency  string  `json:"currency"`
-		Timestamp string  `json:"timestamp"`
+		Id              int    `json:"id" db:"id"`
+		Block           int    `json:"block" db:"block"`
+		FromAddr        string `json:"from_addr" db:"from_addr"`
+		ToAddr          string `json:"to_addr" db:"to_addr"`
+		Amount          uint64 `json:"amount" db:"amount"`
+		Currency        string `json:"currency" db:"currency"`
+		GasUsed         uint64 `json:"gas_used" db:"gas_used"`
+		GasPrice        uint64 `json:"gas_price" db:"gas_price"`
+		CreatedAt       uint64 `json:"created_at" db:"created_at"`
+		TransactionHash string `json:"transaction_hash" db:"transaction_hash"`
 	}
-
-	s1 := rand.NewSource(1337)
-	r1 := rand.New(s1)
-
 	var histories []History
-	for i := 0; i < 100; i++ {
-		n := History{Amount: math.Floor(r1.Float64()*10000) / 10000, Currency: "MSP Tokens", Timestamp: "01.04.2018 " + strconv.Itoa(10+r1.Intn(23)) + ":" + strconv.Itoa(10+r1.Intn(49)) + ":" + strconv.Itoa(10+r1.Intn(49))}
-		histories = append(histories, n)
-	}
+
+	config := configs.Load()
+	mspAddress := config.GetString("msp.wallet_address")
+
+	err := tools.MDB.Select(&histories, "SELECT * FROM ethtosql WHERE (to_addr = ? OR from_addr = ?) AND currency = 'wei' ORDER BY block DESC", mspAddress, mspAddress)
+	tools.ErrorCheck(err, "msp.go", false)
+
 
 	c.JSON(http.StatusOK, histories)
+
+
+
 }
