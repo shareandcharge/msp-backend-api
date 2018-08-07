@@ -117,25 +117,43 @@ func MspGenerateWallet(c *gin.Context) {
 //Gets the history for the MSP
 func MSPHistory(c *gin.Context) {
 
+
+
+	config := configs.Load()
+	mspAddress := config.GetString("msp.wallet_address")
+
+
 	type History struct {
-		Id              int    `json:"id" db:"id"`
 		Block           int    `json:"block" db:"block"`
 		FromAddr        string `json:"from_addr" db:"from_addr"`
 		ToAddr          string `json:"to_addr" db:"to_addr"`
 		Amount          uint64 `json:"amount" db:"amount"`
 		Currency        string `json:"currency" db:"currency"`
-		GasUsed         uint64 `json:"gas_used" db:"gas_used"`
-		GasPrice        uint64 `json:"gas_price" db:"gas_price"`
 		CreatedAt       uint64 `json:"created_at" db:"created_at"`
 		TransactionHash string `json:"transaction_hash" db:"transaction_hash"`
 	}
 	var histories []History
 
-	config := configs.Load()
-	mspAddress := config.GetString("msp.wallet_address")
+	var transactions []tools.TxTransaction
+	err := tools.MDB.Select(&transactions, "SELECT * FROM transactions WHERE (to_addr = ? OR from_addr = ?) ORDER BY blockNumber DESC", mspAddress, mspAddress)
+	tools.ErrorCheck(err, "cpo.go", false)
 
-	err := tools.MDB.Select(&histories, "SELECT * FROM ethtosql WHERE (to_addr = ? OR from_addr = ?) AND currency = 'wei' ORDER BY block DESC", mspAddress, mspAddress)
-	tools.ErrorCheck(err, "msp.go", false)
+	for _, tx := range transactions {
+		if tx.Value == "0x0" {
+			//we have a contract tx
+
+			var txResponse tools.TxReceiptResponse
+			err := tools.MDB.QueryRowx("SELECT * FROM transaction_receipts WHERE transactionHash = ?", tx.Hash).StructScan(&txResponse)
+			tools.ErrorCheck(err, "cpo.go", false)
+			calculatedGas :=  tools.HexToUInt(txResponse.GasUsed) *  tools.HexToUInt(tx.GasPrice)
+			histories = append(histories, History{Block:tx.BlockNumber,FromAddr:tx.From,ToAddr:tx.To,Amount: calculatedGas, Currency:"wei", CreatedAt: tx.Timestamp, TransactionHash:tx.Hash } )
+
+
+		} else{
+			//we have eth transfer
+			histories = append(histories, History{Block:tx.BlockNumber,FromAddr:tx.From,ToAddr:tx.To,Amount: tools.HexToUInt(tx.Value), Currency:"wei", CreatedAt: tx.Timestamp, TransactionHash:tx.Hash } )
+		}
+	}
 
 
 	c.JSON(http.StatusOK, histories)

@@ -9,6 +9,12 @@ import (
 	"context"
 	"bytes"
 	"encoding/json"
+	"strconv"
+	"strings"
+	"crypto/sha1"
+	"fmt"
+	"os/exec"
+	"bufio"
 )
 
 //read the config file, helper function
@@ -121,16 +127,6 @@ func DELETERequest(url string) ([]byte, error) {
 
 }
 
-// quick function to check for an error and, optionally terminate the program
-func ErrorCheck(err error, where string, kill bool) {
-	if err != nil {
-		if kill {
-			log.WithError(err).Fatalln("Script Terminated")
-		} else {
-			log.WithError(err).Warnf("@ %s\n", where)
-		}
-	}
-}
 
 
 //general POST request
@@ -158,4 +154,90 @@ func POSTJsonRequest(url string, jsonMap map[string]interface{}) ([]byte, error)
 	}
 
 	return b, nil
+}
+
+
+
+// quick function to check for an error and, optionally terminate the program
+func ErrorCheck(err error, where string, kill bool) {
+	if err != nil {
+		if kill {
+			log.WithError(err).Fatalln("Script Terminated")
+		} else {
+			log.WithError(err).Warnf("  >>---> error at >>---> %s\n", where)
+		}
+	}
+}
+
+//convert hex to int
+func HexToInt(number string) int64 {
+	if number[0:2] == "0x" {
+		number = number[2:]
+	}
+	i, err := strconv.ParseInt(number, 16, 0)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
+
+//convert int to hex
+func UIntToHex(number uint64) string {
+	return "0x" + strconv.FormatUint(number, 16)
+
+}
+
+//convert hex to int
+func HexToUInt(hexStr string) uint64 {
+	// remove 0x suffix if found in the input string
+	cleaned := strings.Replace(hexStr, "0x", "", -1)
+
+	// base 16 for hexadecimal
+	result, _ := strconv.ParseUint(cleaned, 16, 64)
+	return uint64(result)
+}
+
+
+//generate sha1 hash from interface{}
+func GetSha1Hash(payload interface{}) string {
+
+	out, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+		return ""
+	}
+
+	algorithm := sha1.New()
+	algorithm.Write(out)
+	return fmt.Sprintf("%x", algorithm.Sum(nil))
+}
+
+// wkhtmltopdf needs to be installed
+func GeneratePdf(fromFile string, toFile string) error {
+
+	cmd := exec.Command("wkhtmltopdf", fromFile, toFile)
+	cmdReader, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+
+	scanner := bufio.NewScanner(cmdReader)
+	go func() {
+		for scanner.Scan() {
+			log.Printf("%s\n", scanner.Text())
+		}
+	}()
+
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
