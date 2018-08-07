@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"github.com/motionwerkGmbH/msp-backend-api/configs"
+	"encoding/json"
+	"log"
 )
 
 func MspCreate(c *gin.Context) {
@@ -117,11 +119,8 @@ func MspGenerateWallet(c *gin.Context) {
 //Gets the history for the MSP
 func MSPHistory(c *gin.Context) {
 
-
-
 	config := configs.Load()
 	mspAddress := config.GetString("msp.wallet_address")
-
 
 	type History struct {
 		Block           int    `json:"block" db:"block"`
@@ -145,19 +144,66 @@ func MSPHistory(c *gin.Context) {
 			var txResponse tools.TxReceiptResponse
 			err := tools.MDB.QueryRowx("SELECT * FROM transaction_receipts WHERE transactionHash = ?", tx.Hash).StructScan(&txResponse)
 			tools.ErrorCheck(err, "cpo.go", false)
-			calculatedGas :=  tools.HexToUInt(txResponse.GasUsed) *  tools.HexToUInt(tx.GasPrice)
-			histories = append(histories, History{Block:tx.BlockNumber,FromAddr:tx.From,ToAddr:tx.To,Amount: calculatedGas, Currency:"wei", CreatedAt: tx.Timestamp, TransactionHash:tx.Hash } )
+			calculatedGas := tools.HexToUInt(txResponse.GasUsed) * tools.HexToUInt(tx.GasPrice)
+			histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: calculatedGas, Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
 
-
-		} else{
+		} else {
 			//we have eth transfer
-			histories = append(histories, History{Block:tx.BlockNumber,FromAddr:tx.From,ToAddr:tx.To,Amount: tools.HexToUInt(tx.Value), Currency:"wei", CreatedAt: tx.Timestamp, TransactionHash:tx.Hash } )
+			histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: tools.HexToUInt(tx.Value), Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
 		}
 	}
 
-
 	c.JSON(http.StatusOK, histories)
 
+}
 
+// Shows the latest transaction from a driver
+// https://trello.com/c/vokmESXz/182-see-latest-charging-sessions-1
+func GetDriverHistory(c *gin.Context) {
+
+	driverAddr := c.Param("addr")
+
+	type CDR struct {
+		EvseID           string `json:"evseId"`
+		ScID             string `json:"scId"`
+		Controller       string `json:"controller"`
+		Start            string `json:"start"`
+		End              string `json:"end"`
+		FinalPrice       string `json:"finalPrice"`
+		TokenContract    string `json:"tokenContract"`
+		Tariff           string `json:"tariff"`
+		ChargedUnits     string `json:"chargedUnits"`
+		ChargingContract string `json:"chargingContract"`
+		TransactionHash  string `json:"transactionHash"`
+		Currency         string `json:"currency"`
+	}
+
+	body := tools.GETRequest("http://localhost:3000/api/cdr/info") //+ ?controller=driverAddr
+
+	var cdrs []CDR
+	err := json.Unmarshal(body, &cdrs)
+	if err != nil {
+		log.Panic(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "ops! it's our fault. This error should never happen."})
+		return
+	}
+
+	var cdrsOutput []CDR
+	for _, cdr := range cdrs {
+		cdr.Currency = "Charge & Fuel Token"
+
+		//TODO: after filtering works, remove this part
+		//filter by the driver
+		if cdr.Controller == driverAddr {
+			cdrsOutput = append(cdrsOutput, cdr)
+		}
+	}
+
+	if len(cdrsOutput) == 0 {
+		c.JSON(http.StatusOK, []string{})
+		return
+	}
+
+	c.JSON(http.StatusOK, cdrsOutput)
 
 }
