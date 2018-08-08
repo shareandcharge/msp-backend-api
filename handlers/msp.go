@@ -9,6 +9,7 @@ import (
 	"github.com/motionwerkGmbH/msp-backend-api/configs"
 	"encoding/json"
 	"log"
+	"strings"
 )
 
 func MspCreate(c *gin.Context) {
@@ -192,9 +193,12 @@ func GetDriverHistory(c *gin.Context) {
 	for _, cdr := range cdrs {
 		cdr.Currency = "Charge & Fuel Token"
 
+		log.Println("processing.. %s, %s", driverAddr, cdr.Controller)
+
 		//TODO: after filtering works, remove this part
 		//filter by the driver
-		if cdr.Controller == driverAddr {
+		if strings.ToLower(cdr.Controller) == strings.ToLower(driverAddr) {
+			log.Println("adding")
 			cdrsOutput = append(cdrsOutput, cdr)
 		}
 	}
