@@ -1,19 +1,19 @@
 package tools
 
-//This class connects to the Charge & Fuel Mobile Application to get a list of the drivers
+//This class connects to the Charge & Fuel Mobile Application to get a list of the ev drivers
 import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
 type Driver struct {
-	Index int `json:"index"`
+	Index   int           `json:"index"`
 	ID      bson.ObjectId `bson:"_id" json:"id"`
 	Email   string        `bson:"email" json:"email"`
 	About   interface{}   `bson:"about" json:"about"`
 	Address string        `bson:"address" json:"address"`
-	Balance float64 `json:"balance"`
-	Token string `json:"token"`
+	Balance float64       `json:"balance"`
+	Token   string        `json:"token"`
 }
 
 // returns a list of all the users from the mobile app
