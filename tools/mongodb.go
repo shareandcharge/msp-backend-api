@@ -7,6 +7,7 @@ import (
 )
 
 type Driver struct {
+	Index int `json:"index"`
 	ID      bson.ObjectId `bson:"_id" json:"id"`
 	Email   string        `bson:"email" json:"email"`
 	About   interface{}   `bson:"about" json:"about"`

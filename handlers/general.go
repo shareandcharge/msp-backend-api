@@ -41,7 +41,7 @@ func GetWalletBalance(c *gin.Context) {
 
 
 //Returns a list of all drivers
-func GetAllDrivers(c *gin.Context){
+func GetAllDrivers(c *gin.Context) {
 
 	driversList, err := tools.ReturnAllDrivers()
 	if err != nil {
@@ -51,12 +51,13 @@ func GetAllDrivers(c *gin.Context){
 	}
 
 	var mDriversList []tools.Driver
-	for _, driver := range driversList   {
-		driver.Token = "Charge & Fuel Token"
+	for k, driver := range driversList {
+		driver.Token = "Charge&Fuel Token"
 
 		body := tools.GETRequest("http://localhost:3000/api/token/balance/" + driver.Address)
 		balanceFloat, _ := strconv.ParseFloat(string(body), 64)
 		driver.Balance = balanceFloat
+		driver.Index = k
 
 		mDriversList = append(mDriversList, driver)
 
@@ -64,6 +65,7 @@ func GetAllDrivers(c *gin.Context){
 
 	c.JSON(http.StatusOK, mDriversList)
 }
+
 
 // getting the token info
 func TokenInfo(c *gin.Context) {
