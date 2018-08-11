@@ -50,9 +50,11 @@ func InitializeRoutes() {
 		//gets the MSP history of transactions
 		v1.GET("/msp/history", handlers.MSPHistory)
 
-
 		//shows the balance in eth of a wallet
 		v1.GET("/tx_history/:addr", handlers.GetDriverHistory)
+
+		//list reimbursements from an CPO
+		v1.GET("/list_reimbursements", handlers.ListReimbursements)
 
 	}
 
