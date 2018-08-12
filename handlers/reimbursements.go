@@ -40,7 +40,7 @@ func ViewCDRs(c *gin.Context) {
 	}
 	var reimbursement Reimbursement
 
-	err := tools.MDB.QueryRowx("SELECT cdr_records FROM reimbursements WHERE id = ?", reimbursementId).StructScan(&reimbursement)
+	err := tools.MDB.QueryRowx("SELECT cdr_records FROM reimbursements WHERE reimbursement_id = ?", reimbursementId).StructScan(&reimbursement)
 	tools.ErrorCheck(err, "cpo.go", false)
 
 	if reimbursement.CdrRecords == "" {
