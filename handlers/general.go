@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"github.com/motionwerkGmbH/msp-backend-api/tools"
-	log "github.com/Sirupsen/logrus"
 	"encoding/json"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
+	"github.com/motionwerkGmbH/msp-backend-api/tools"
+	"net/http"
 	"strconv"
 )
 
@@ -35,15 +35,15 @@ func GetWalletBalance(c *gin.Context) {
 	log.Printf("Balance is %s", tBalance.Balance)
 	balanceFloat, _ := strconv.ParseFloat(string(tBalance.Balance), 64)
 
-
 	c.JSON(http.StatusOK, gin.H{"balance": balanceFloat / 1000000000000000000, "currency": "EV Coin"})
 }
-
 
 //Returns a list of all drivers
 func GetAllDrivers(c *gin.Context) {
 
 	driversList, err := tools.ReturnAllDrivers()
+	log.Printf("Got in total %d drivers\n", len(driversList))
+
 	if err != nil {
 		log.Panic(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ops! it's our fault. This error should never happen."})
@@ -53,7 +53,7 @@ func GetAllDrivers(c *gin.Context) {
 	var mDriversList []tools.Driver
 	for k, driver := range driversList {
 		driver.Token = "Charge&Fuel Token"
-
+		log.Info("getting > " + "http://localhost:3000/api/token/balance/" + driver.Address)
 		body := tools.GETRequest("http://localhost:3000/api/token/balance/" + driver.Address)
 		balanceFloat, _ := strconv.ParseFloat(string(body), 64)
 		driver.Balance = balanceFloat
@@ -65,7 +65,6 @@ func GetAllDrivers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, mDriversList)
 }
-
 
 // getting the token info
 func TokenInfo(c *gin.Context) {
@@ -101,7 +100,6 @@ func TokenBalance(c *gin.Context) {
 
 }
 
-
 // mint the tokens for the EV Driver
 func TokenMint(c *gin.Context) {
 
@@ -126,8 +124,6 @@ func TokenMint(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
-
-
 
 // this will TRUNCATE the database.
 func Reinit(c *gin.Context) {

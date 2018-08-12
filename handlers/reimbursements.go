@@ -2,13 +2,59 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"net/http"
+	"strings"
 )
 
-// mint the tokens for the EV Driver
+func SetReimbursementStatus(c *gin.Context) {
+	reimbursementId := c.Param("reimbursement_id")
+	status := c.Param("status")
+
+	count := 0
+	row := tools.MDB.QueryRow("SELECT COUNT(*) as count FROM reimbursements WHERE reimbursement_id = '" + reimbursementId + "'")
+	row.Scan(&count)
+
+	if count == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "could not find any reimbursement with this id"})
+		return
+	}
+
+	//update status from the database
+	query := "UPDATE reimbursements SET status='%s' WHERE reimbursement_id = '%s'"
+	command := fmt.Sprintf(query, status, reimbursementId)
+	tools.MDB.MustExec(command)
+
+	c.JSON(http.StatusOK, gin.H{"status": "updated"})
+}
+
+func ViewCDRs(c *gin.Context) {
+
+	reimbursementId := c.Param("reimbursement_id")
+
+	type Reimbursement struct {
+		CdrRecords string `json:"cdr_records" db:"cdr_records"`
+	}
+	var reimbursement Reimbursement
+
+	err := tools.MDB.QueryRowx("SELECT cdr_records FROM reimbursements WHERE id = ?", reimbursementId).StructScan(&reimbursement)
+	tools.ErrorCheck(err, "cpo.go", false)
+
+	if reimbursement.CdrRecords == "" {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no reimbursements found"})
+		return
+	}
+
+	output := strings.Replace(reimbursement.CdrRecords, "\\", "", -1)
+
+	c.JSON(200, output)
+
+}
+
+// lists all reimbursements filtered by status query parameter
 func ListReimbursements(c *gin.Context) {
 
 	status := c.DefaultQuery("status", "pending")
@@ -33,6 +79,7 @@ func ListReimbursements(c *gin.Context) {
 
 	type AllReimbursements struct {
 		CpoName        string          `json:"cpo_name"`
+		ServerUrl      string          `json:"server_url"`
 		Reimbursements []Reimbursement `json:"reimbursements"`
 	}
 
@@ -51,7 +98,7 @@ func ListReimbursements(c *gin.Context) {
 		err := json.Unmarshal(body, &reimb)
 		tools.ErrorCheck(err, "msp.go", true)
 
-		all_reimbursements = append(all_reimbursements, AllReimbursements{CpoName: cpo.Name, Reimbursements: reimb})
+		all_reimbursements = append(all_reimbursements, AllReimbursements{CpoName: cpo.Name, Reimbursements: reimb, ServerUrl: cpo.ServerAddress})
 
 	}
 

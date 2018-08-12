@@ -56,6 +56,12 @@ func InitializeRoutes() {
 		//list reimbursements from an CPO
 		v1.GET("/list_reimbursements", handlers.ListReimbursements)
 
+		//view CDRs
+		v1.GET("/view_cdrs/:reimbursement_id", handlers.ViewCDRs)
+
+		//set a CDR as payment mage
+		v1.PUT("/set_status/:reimbursement_id/:status", handlers.SetReimbursementStatus)
+
 	}
 
 }
