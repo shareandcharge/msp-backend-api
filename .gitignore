@@ -14,6 +14,8 @@ api_config.json
 
 //all db files, not in repo
 *.db
+/build/
+/build
 
 # Binaries for programs and plugins
 *.exe
