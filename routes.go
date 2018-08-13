@@ -53,7 +53,7 @@ func InitializeRoutes() {
 		//shows the balance in eth of a wallet
 		v1.GET("/tx_history/:addr", handlers.GetDriverHistory)
 
-		//list reimbursements from an CPO
+		//list reimbursements from an CPO  with ?status=pending
 		v1.GET("/list_reimbursements", handlers.ListReimbursements)
 
 		//view CDRs
