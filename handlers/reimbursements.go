@@ -60,6 +60,7 @@ func ListReimbursements(c *gin.Context) {
 	status := c.DefaultQuery("status", "pending")
 
 	type CpoInfo struct {
+		Index         int    `json:"index"`
 		Name          string `json:"name"`
 		PublicKey     string `json:"public_key"`
 		ServerAddress string `json:"server_addr"`
@@ -87,8 +88,8 @@ func ListReimbursements(c *gin.Context) {
 
 	var allCpos []CpoInfo
 
-	allCpos = append(allCpos, CpoInfo{"Innogy Office", "0x7b0f2b531c018d4269a95561cfb4e038a7e3c8dc", "http://52.57.155.233:9090/api/v1"})
-	allCpos = append(allCpos, CpoInfo{"Cpo2", "0x7b0f2b531c018d4269a95561cfb4e038a7e3c8dc", "https://innogy-api.shareandcharge.com/api/v1"})
+	allCpos = append(allCpos, CpoInfo{0, "Innogy Office", "0x7b0f2b531c018d4269a95561cfb4e038a7e3c8dc", "http://52.57.155.233:9090/api/v1"})
+	allCpos = append(allCpos, CpoInfo{1, "Cpo2", "0x7b0f2b531c018d4269a95561cfb4e038a7e3c8dc", "https://innogy-api.shareandcharge.com/api/v1"})
 
 	for _, cpo := range allCpos {
 		logrus.Info("Processing CPO: %s", cpo.Name)
