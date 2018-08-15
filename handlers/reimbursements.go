@@ -5,7 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"net/http"
-	"strings"
+		"encoding/json"
+	"log"
+	"bytes"
+	"encoding/csv"
 )
 
 func SetReimbursementStatus(c *gin.Context) {
@@ -33,6 +36,21 @@ func ViewCDRs(c *gin.Context) {
 
 	reimbursementId := c.Param("reimbursement_id")
 
+	type CDR struct {
+		EvseID           string `json:"evseId"`
+		ScID             string `json:"scId"`
+		Controller       string `json:"controller"`
+		Start            string `json:"start"`
+		End              string `json:"end"`
+		FinalPrice       string `json:"finalPrice"`
+		TokenContract    string `json:"tokenContract"`
+		Tariff           string `json:"tariff"`
+		ChargedUnits     string `json:"chargedUnits"`
+		ChargingContract string `json:"chargingContract"`
+		TransactionHash  string `json:"transactionHash"`
+		Currency         string `json:"currency"`
+	}
+
 	type Reimbursement struct {
 		CdrRecords string `json:"cdr_records" db:"cdr_records"`
 	}
@@ -46,9 +64,28 @@ func ViewCDRs(c *gin.Context) {
 		return
 	}
 
-	output := strings.Replace(reimbursement.CdrRecords, "\\", "", -1)
+	var cdrs []CDR
+	err = json.Unmarshal([]byte(reimbursement.CdrRecords), &cdrs)
+	if err != nil {
+		log.Panic(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "ops! it's our fault. This error should never happen."})
+		return
+	}
 
-	c.JSON(200, output)
+
+	b := &bytes.Buffer{} // creates IO Writer
+	wr := csv.NewWriter(b) // creates a csv writer that uses the io buffer.
+
+
+	wr.Write([]string{"evseId", "scId","controller","start","end","finalPrice","tokenContract","tariff","chargedUnits","chargingContract","transactionHash","currency"})
+	for _, cdr := range cdrs {
+		wr.Write([]string{cdr.EvseID, cdr.ScID, cdr.Controller, cdr.Start, cdr.End, cdr.FinalPrice, cdr.TokenContract, cdr.Tariff, cdr.ChargedUnits, cdr.ChargingContract, cdr.TransactionHash, cdr.Currency})
+	}
+	wr.Flush()
+
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename=cdrs_"+reimbursementId+".csv")
+	c.Data(http.StatusOK, "text/csv", b.Bytes())
 
 }
 
@@ -75,6 +112,12 @@ func ListReimbursements(c *gin.Context) {
 
 	err := tools.MDB.Select(&reimbursements, "SELECT * FROM reimbursements WHERE status = ? ORDER BY timestamp DESC", status)
 	tools.ErrorCheck(err, "cpo.go", false)
+
+	if len(reimbursements) == 0 {
+		log.Println("no reimbursements found with status " + status)
+		c.JSON(200, []string{})
+		return
+	}
 
 	var output []Reimbursement
 	for k, reimb := range reimbursements {
