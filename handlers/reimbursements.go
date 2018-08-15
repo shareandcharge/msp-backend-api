@@ -106,6 +106,8 @@ func ListReimbursements(c *gin.Context) {
 		ReimbursementId string `json:"reimbursement_id" db:"reimbursement_id"`
 		CdrRecords      string `json:"cdr_records" db:"cdr_records"`
 		ServerAddr      string `json:"server_addr" db:"server_addr"`
+		TxNumber      int      `json:"txs_number" db:"txs_number"`
+
 	}
 
 	var reimbursements []Reimbursement
