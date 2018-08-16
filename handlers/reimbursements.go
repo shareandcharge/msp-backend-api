@@ -38,20 +38,7 @@ func ViewCDRs(c *gin.Context) {
 
 	reimbursementId := c.Param("reimbursement_id")
 
-	type CDR struct {
-		EvseID           string `json:"evseId"`
-		ScID             string `json:"scId"`
-		Controller       string `json:"controller"`
-		Start            string `json:"start"`
-		End              string `json:"end"`
-		FinalPrice       string `json:"finalPrice"`
-		TokenContract    string `json:"tokenContract"`
-		Tariff           string `json:"tariff"`
-		ChargedUnits     string `json:"chargedUnits"`
-		ChargingContract string `json:"chargingContract"`
-		TransactionHash  string `json:"transactionHash"`
-		Currency         string `json:"currency"`
-	}
+
 
 	type Reimbursement struct {
 		CdrRecords string `json:"cdr_records" db:"cdr_records"`
@@ -66,7 +53,7 @@ func ViewCDRs(c *gin.Context) {
 		return
 	}
 
-	var cdrs []CDR
+	var cdrs []tools.CDR
 	err = json.Unmarshal([]byte(reimbursement.CdrRecords), &cdrs)
 	if err != nil {
 		log.Panic(err)

@@ -7,12 +7,10 @@ import (
 	"github.com/motionwerkGmbH/cpo-backend-api/tools"
 )
 
-
-
 var MDB *sqlx.DB
 
 func MySQLConnect(dbName string) {
-	MDB, err := sqlx.Connect("mysql", "andy:hardpassword1@(18.197.172.83:3306)/blockchain")
+	MDB, err := sqlx.Connect("mysql", "andy:hardpassword1@(18.197.172.83:3306)/"+dbName)
 	tools.ErrorCheck(err, "mysql_database.go", true)
 
 	//some benchmark should be done here

@@ -55,7 +55,7 @@ func InitializeRoutes() {
 		//view CDRs
 		v1.GET("/view_cdrs/:reimbursement_id", handlers.ViewCDRs)
 
-		//set a CDR as payment mage
+		//set a CDR as payment status
 		v1.PUT("/set_status/:reimbursement_id/:status", handlers.SetReimbursementStatus)
 
 	}

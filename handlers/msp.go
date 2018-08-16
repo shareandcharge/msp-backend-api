@@ -164,24 +164,11 @@ func GetDriverHistory(c *gin.Context) {
 
 	driverAddr := c.Param("addr")
 
-	type CDR struct {
-		EvseID           string `json:"evseId"`
-		ScID             string `json:"scId"`
-		Controller       string `json:"controller"`
-		Start            string `json:"start"`
-		End              string `json:"end"`
-		FinalPrice       string `json:"finalPrice"`
-		TokenContract    string `json:"tokenContract"`
-		Tariff           string `json:"tariff"`
-		ChargedUnits     string `json:"chargedUnits"`
-		ChargingContract string `json:"chargingContract"`
-		TransactionHash  string `json:"transactionHash"`
-		Currency         string `json:"currency"`
-	}
+
 
 	body := tools.GETRequest("http://localhost:3000/api/cdr/info") //+ ?controller=driverAddr
 
-	var cdrs []CDR
+	var cdrs []tools.CDR
 	err := json.Unmarshal(body, &cdrs)
 	if err != nil {
 		log.Panic(err)
@@ -189,11 +176,11 @@ func GetDriverHistory(c *gin.Context) {
 		return
 	}
 
-	var cdrsOutput []CDR
+	var cdrsOutput []tools.CDR
 	for _, cdr := range cdrs {
 		cdr.Currency = "Charge & Fuel Token"
 
-		log.Println("processing.. %s, %s", driverAddr, cdr.Controller)
+		log.Printf("processing.. %s, %s", driverAddr, cdr.Controller)
 
 		//TODO: after filtering works, remove this part
 		//filter by the driver
