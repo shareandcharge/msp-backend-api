@@ -7,9 +7,7 @@ func InitializeRoutes() {
 	v1 := router.Group("/api/v1")
 	{
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~ GENERAL STUFF ~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		v1.GET("/", handlers.Index)
 
@@ -31,9 +29,7 @@ func InitializeRoutes() {
 		//returns a list of all EV Drivers with their details & balances
 		v1.GET("/drivers", handlers.GetAllDrivers)
 
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~ MSP ~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		//gets all the info about an msp
 		v1.GET("/msp", handlers.MspInfo)

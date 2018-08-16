@@ -11,6 +11,7 @@ import (
 	"encoding/csv"
 )
 
+//sets a reimbursement status (ex: complete)
 func SetReimbursementStatus(c *gin.Context) {
 	reimbursementId := c.Param("reimbursement_id")
 	status := c.Param("status")
@@ -20,7 +21,7 @@ func SetReimbursementStatus(c *gin.Context) {
 	row.Scan(&count)
 
 	if count == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "could not find any reimbursement with this id"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "could not find any reimbursement with this id "+ reimbursementId})
 		return
 	}
 
@@ -32,6 +33,7 @@ func SetReimbursementStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
 }
 
+//shows the CDR records of a reimbursement
 func ViewCDRs(c *gin.Context) {
 
 	reimbursementId := c.Param("reimbursement_id")
@@ -94,23 +96,7 @@ func ListReimbursements(c *gin.Context) {
 
 	status := c.DefaultQuery("status", "pending")
 
-	type Reimbursement struct {
-		Index           int    `json:"index"`
-		Id              int    `json:"id" db:"id"`
-		MspName         string `json:"msp_name" db:"msp_name"`
-		CpoName         string `json:"cpo_name" db:"cpo_name"`
-		Amount          int    `json:"amount" db:"amount"`
-		Currency        string `json:"currency" db:"currency"`
-		Timestamp       int    `json:"timestamp" db:"timestamp"`
-		Status          string `json:"status" db:"status"`
-		ReimbursementId string `json:"reimbursement_id" db:"reimbursement_id"`
-		CdrRecords      string `json:"cdr_records" db:"cdr_records"`
-		ServerAddr      string `json:"server_addr" db:"server_addr"`
-		TxNumber      int      `json:"txs_number" db:"txs_number"`
-
-	}
-
-	var reimbursements []Reimbursement
+	var reimbursements []tools.Reimbursement
 
 	err := tools.MDB.Select(&reimbursements, "SELECT * FROM reimbursements WHERE status = ? ORDER BY timestamp DESC", status)
 	tools.ErrorCheck(err, "cpo.go", false)
@@ -121,7 +107,7 @@ func ListReimbursements(c *gin.Context) {
 		return
 	}
 
-	var output []Reimbursement
+	var output []tools.Reimbursement
 	for k, reimb := range reimbursements {
 		reimb.Index = k
 		output = append(output, reimb)

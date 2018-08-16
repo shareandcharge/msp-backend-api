@@ -53,14 +53,15 @@ func GetAllDrivers(c *gin.Context) {
 	var mDriversList []tools.Driver
 	for k, driver := range driversList {
 		driver.Token = "Charge&Fuel Token"
+
 		log.Info("getting > " + "http://localhost:3000/api/token/balance/" + driver.Address)
+
 		body := tools.GETRequest("http://localhost:3000/api/token/balance/" + driver.Address)
 		balanceFloat, _ := strconv.ParseFloat(string(body), 64)
 		driver.Balance = balanceFloat
 		driver.Index = k
 
 		mDriversList = append(mDriversList, driver)
-
 	}
 
 	c.JSON(http.StatusOK, mDriversList)
@@ -144,8 +145,12 @@ func Reinit(c *gin.Context) {
 			vat_number      VARCHAR(250) DEFAULT ''
 		);
 `
-
-	tools.DB.MustExec(schema)
+	_, err := tools.DB.Exec(schema)
+	if err != nil {
+		log.Panic(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "database truncated."})
 }

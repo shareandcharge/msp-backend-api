@@ -36,15 +36,15 @@ func main() {
 	tools.MySQLConnect("blockchain")
 
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-	log.Println("~~~~~~~~~~~~~~~~~~ MSP BACKEND RUNNING ~~~~~~~~~~~~~~~~~")
+	log.Println("~~~~~~~~~~~ MSP BACKEND RUNNING v: 0.1 ~~~~~~~~~~~~~~~~~")
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 	// Serve 'em...
 	server := &http.Server{
 		Addr:           Config.GetString("hostname") + ":" + strconv.Itoa(Config.GetInt("port")),
 		Handler:        router,
-		ReadTimeout:    200 * time.Second,
-		WriteTimeout:   200 * time.Second,
+		ReadTimeout:    60 * time.Second,
+		WriteTimeout:   60 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	server.SetKeepAlivesEnabled(false)

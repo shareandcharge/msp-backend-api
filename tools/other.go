@@ -30,7 +30,7 @@ func ReadConfig(filename string, defaults map[string]interface{}) (*viper.Viper,
 	return v, err
 }
 
-// a general get request with 200 seconds timeout (yep, 200!)
+// a general get request with 100 sec timeout
 func GETRequest(url string) []byte {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -38,7 +38,7 @@ func GETRequest(url string) []byte {
 		return nil
 	}
 
-	ctx, cancel := context.WithTimeout(req.Context(), 200*time.Second)
+	ctx, cancel := context.WithTimeout(req.Context(), 100*time.Second)
 	defer cancel()
 
 	req = req.WithContext(ctx)
