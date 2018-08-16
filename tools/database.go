@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-type MSP struct {
-	MspId     int    `db:"msp_id" json:"msp_id"`
+type CPO struct {
+	CpoId     int    `db:"cpo_id" json:"cpo_id"`
 	Wallet    string `db:"wallet" json:"wallet"`
 	Seed      string `db:"seed" json:"seed"`
 	Name      string `db:"name" json:"name"`
@@ -23,7 +23,7 @@ type MSP struct {
 var DB *sqlx.DB
 
 func Connect(dbName string) {
-	DB := sqlx.MustConnect("sqlite3", dbName)
+	DB = sqlx.MustConnect("sqlite3", dbName)
 
 	//some benchmark should be done here
 	DB.SetMaxOpenConns(300)

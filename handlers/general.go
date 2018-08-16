@@ -130,9 +130,9 @@ func TokenMint(c *gin.Context) {
 func Reinit(c *gin.Context) {
 
 	var schema = `
-	DROP TABLE IF EXISTS msp;
-	CREATE TABLE msp (
-			msp_id    INTEGER PRIMARY KEY,
+	DROP TABLE IF EXISTS cpo;
+	CREATE TABLE cpo (
+			cpo_id    INTEGER PRIMARY KEY,
     		wallet VARCHAR(80)  DEFAULT '',
     		seed  VARCHAR(250)  DEFAULT '',
 			name      VARCHAR(250) DEFAULT '',
@@ -145,12 +145,8 @@ func Reinit(c *gin.Context) {
 			vat_number      VARCHAR(250) DEFAULT ''
 		);
 `
-	_, err := tools.DB.Exec(schema)
-	if err != nil {
-		log.Panic(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-		return
-	}
+
+	tools.DB.MustExec(schema)
 
 	c.JSON(http.StatusOK, gin.H{"status": "database truncated."})
 }
