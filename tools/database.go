@@ -23,8 +23,7 @@ type MSP struct {
 var DB *sqlx.DB
 
 func Connect(dbName string) {
-	DB, err := sqlx.Connect("sqlite3", dbName)
-	ErrorCheck(err, "sqlite db in database.go", true)
+	DB := sqlx.MustConnect("sqlite3", dbName)
 
 	//some benchmark should be done here
 	DB.SetMaxOpenConns(300)
