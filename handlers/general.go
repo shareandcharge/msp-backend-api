@@ -130,9 +130,9 @@ func TokenMint(c *gin.Context) {
 func Reinit(c *gin.Context) {
 
 	var schema = `
-	DROP TABLE IF EXISTS cpo;
-	CREATE TABLE cpo (
-			cpo_id    INTEGER PRIMARY KEY,
+	DROP TABLE IF EXISTS msp;
+	CREATE TABLE msp (
+			msp_id    INTEGER PRIMARY KEY,
     		wallet VARCHAR(80)  DEFAULT '',
     		seed  VARCHAR(250)  DEFAULT '',
 			name      VARCHAR(250) DEFAULT '',
