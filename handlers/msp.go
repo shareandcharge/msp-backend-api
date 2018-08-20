@@ -182,7 +182,7 @@ func GetDriverHistory(c *gin.Context) {
 
 		log.Printf("processing.. %s, %s", driverAddr, cdr.Controller)
 
-		//TODO: after filtering works, remove this part
+		//TODO: after filtering works, remove this part!
 		//filter by the driver
 		if strings.ToLower(cdr.Controller) == strings.ToLower(driverAddr) {
 			log.Println("adding")
