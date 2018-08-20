@@ -54,8 +54,6 @@ func GetAllDrivers(c *gin.Context) {
 	for k, driver := range driversList {
 		driver.Token = "Charge&Fuel Token"
 
-		log.Info("getting > " + "http://localhost:3000/api/token/balance/" + driver.Address)
-
 		body := tools.GETRequest("http://localhost:3000/api/token/balance/" + driver.Address)
 		balanceFloat, _ := strconv.ParseFloat(string(body), 64)
 		driver.Balance = balanceFloat

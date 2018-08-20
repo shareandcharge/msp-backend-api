@@ -169,4 +169,6 @@ type CDR struct {
 	ChargingContract string `json:"chargingContract"`
 	TransactionHash  string `json:"transactionHash"`
 	Currency         string `json:"currency"`
+	LocationName     string `json:"location_name"`
+	LocationAddress  string `json:"location_address"`
 }

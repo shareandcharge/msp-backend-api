@@ -6,7 +6,7 @@ import (
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"net/http"
 		"encoding/json"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"bytes"
 	"encoding/csv"
 )
@@ -66,9 +66,9 @@ func ViewCDRs(c *gin.Context) {
 	wr := csv.NewWriter(b) // creates a csv writer that uses the io buffer.
 
 
-	wr.Write([]string{"evseId", "scId","controller","start","end","finalPrice","tokenContract","tariff","chargedUnits","chargingContract","transactionHash","currency"})
+	wr.Write([]string{"locationName", "locationAddress", "evseId", "scId","controller","start","end","finalPrice","tokenContract","tariff","chargedUnits","chargingContract","transactionHash","currency"})
 	for _, cdr := range cdrs {
-		wr.Write([]string{cdr.EvseID, cdr.ScID, cdr.Controller, cdr.Start, cdr.End, cdr.FinalPrice, cdr.TokenContract, cdr.Tariff, cdr.ChargedUnits, cdr.ChargingContract, cdr.TransactionHash, cdr.Currency})
+		wr.Write([]string{cdr.LocationName, cdr.LocationAddress, cdr.EvseID, cdr.ScID, cdr.Controller, cdr.Start, cdr.End, cdr.FinalPrice, cdr.TokenContract, cdr.Tariff, cdr.ChargedUnits, cdr.ChargingContract, cdr.TransactionHash, cdr.Currency})
 	}
 	wr.Flush()
 

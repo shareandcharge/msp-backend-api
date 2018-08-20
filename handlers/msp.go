@@ -8,7 +8,7 @@ import (
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
 	"github.com/motionwerkGmbH/msp-backend-api/configs"
 	"encoding/json"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"strings"
 )
 
@@ -164,9 +164,7 @@ func GetDriverHistory(c *gin.Context) {
 
 	driverAddr := c.Param("addr")
 
-
-
-	body := tools.GETRequest("http://localhost:3000/api/cdr/info") //+ ?controller=driverAddr
+	body := tools.GETRequest("http://localhost:3000/api/cdr/info") //?controller="+ driverAddr)
 
 	var cdrs []tools.CDR
 	err := json.Unmarshal(body, &cdrs)
@@ -177,15 +175,34 @@ func GetDriverHistory(c *gin.Context) {
 	}
 
 	var cdrsOutput []tools.CDR
+
 	for _, cdr := range cdrs {
 		cdr.Currency = "Charge & Fuel Token"
-
-		log.Printf("processing.. %s, %s", driverAddr, cdr.Controller)
 
 		//TODO: after filtering works, remove this part!
 		//filter by the driver
 		if strings.ToLower(cdr.Controller) == strings.ToLower(driverAddr) {
-			log.Println("adding")
+
+			//gets the CPO address, needed for the next query
+			body = tools.GETRequest("http://localhost:3000/api/store/get-owner/" + cdr.ScID)
+			if body != nil {
+				locationCPO := string(body)
+
+				//get the location name & address
+				body = tools.GETRequest("http://localhost:3000/api/store/locations/" + locationCPO + "/" + cdr.ScID)
+				if body != nil {
+
+					var loc tools.Location
+					err := json.Unmarshal(body, &loc)
+					if err != nil {
+						log.Warnf(err.Error())
+					} else {
+						log.Info(loc)
+						cdr.LocationName = loc.Name
+						cdr.LocationAddress = loc.City + ", " + loc.Address + ", " + loc.Country
+					}
+				}
+			}
 			cdrsOutput = append(cdrsOutput, cdr)
 		}
 	}
@@ -200,7 +217,7 @@ func GetDriverHistory(c *gin.Context) {
 		cdrsOutput[i], cdrsOutput[j] = cdrsOutput[j], cdrsOutput[i]
 	}
 
-
+	log.Infof("We got in total %d CDRs of this driver", len(cdrsOutput))
 	c.JSON(http.StatusOK, cdrsOutput)
 
 }
