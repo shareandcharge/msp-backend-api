@@ -153,7 +153,7 @@ type Reimbursement struct {
 	CdrRecords      string `json:"cdr_records" db:"cdr_records"`
 	ServerAddr      string `json:"server_addr" db:"server_addr"`
 	TxNumber        int    `json:"txs_number" db:"txs_number"`
-	TokenAddress    string    `json:"token_address" db:"token_address"`
+	TokenAddress    string `json:"token_address" db:"token_address"`
 }
 
 type CDR struct {
