@@ -195,12 +195,14 @@ func GetDriverHistory(c *gin.Context) {
 					var loc tools.Location
 					err := json.Unmarshal(body, &loc)
 					if err != nil {
-						log.Warnf(err.Error())
+						log.Warnf("can't unmarshal: %s", "http://localhost:3000/api/store/locations/" + locationCPO + "/" + cdr.ScID)
 					} else {
 						log.Info(loc)
 						cdr.LocationName = loc.Name
-						cdr.LocationAddress = loc.City + ", " + loc.Address + ", " + loc.Country
+						cdr.LocationAddress = loc.City + ", " + loc.Address
 					}
+				}else{
+					log.Warnf("location didn't return anything: %s", "http://localhost:3000/api/store/locations/" + locationCPO + "/" + cdr.ScID)
 				}
 			}
 			cdrsOutput = append(cdrsOutput, cdr)
