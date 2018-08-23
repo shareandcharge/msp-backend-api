@@ -148,7 +148,7 @@ func MSPHistory(c *gin.Context) {
 			calculatedGas := tools.HexToUInt(txResponse.GasUsed) * tools.HexToUInt(tx.GasPrice)
 
 			log.Info("calculated gas %d", calculatedGas)
-			if calculatedGas > 100000 {
+			if calculatedGas > 94728 {
 				histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: calculatedGas, Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
 			}
 		} else {
