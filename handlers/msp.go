@@ -147,7 +147,7 @@ func MSPHistory(c *gin.Context) {
 			tools.ErrorCheck(err, "cpo.go", false)
 			calculatedGas := tools.HexToUInt(txResponse.GasUsed) * tools.HexToUInt(tx.GasPrice)
 
-			histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: calculatedGas * 10000000000, Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
+			histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: calculatedGas * 100000000000, Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
 
 		} else {
 			//we have eth transfer
