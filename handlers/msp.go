@@ -147,10 +147,8 @@ func MSPHistory(c *gin.Context) {
 			tools.ErrorCheck(err, "cpo.go", false)
 			calculatedGas := tools.HexToUInt(txResponse.GasUsed) * tools.HexToUInt(tx.GasPrice)
 
-			log.Info("calculated gas %d", calculatedGas)
-			if calculatedGas > 94728 {
-				histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: calculatedGas, Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
-			}
+			histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: calculatedGas * 10000000000, Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
+
 		} else {
 			//we have eth transfer
 			histories = append(histories, History{Block: tx.BlockNumber, FromAddr: tx.From, ToAddr: tx.To, Amount: tools.HexToUInt(tx.Value), Currency: "wei", CreatedAt: tx.Timestamp, TransactionHash: tx.Hash})
@@ -198,14 +196,14 @@ func GetDriverHistory(c *gin.Context) {
 					var loc tools.Location
 					err := json.Unmarshal(body, &loc)
 					if err != nil {
-						log.Warnf("can't unmarshal: %s", "http://localhost:3000/api/store/locations/" + locationCPO + "/" + cdr.ScID)
+						log.Warnf("can't unmarshal: %s", "http://localhost:3000/api/store/locations/"+locationCPO+"/"+cdr.ScID)
 					} else {
 						log.Info(loc)
 						cdr.LocationName = loc.Name
 						cdr.LocationAddress = loc.City + ", " + loc.Address
 					}
-				}else{
-					log.Warnf("location didn't return anything: %s", "http://localhost:3000/api/store/locations/" + locationCPO + "/" + cdr.ScID)
+				} else {
+					log.Warnf("location didn't return anything: %s", "http://localhost:3000/api/store/locations/"+locationCPO+"/"+cdr.ScID)
 				}
 			}
 			cdrsOutput = append(cdrsOutput, cdr)
