@@ -2,8 +2,7 @@ package main
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+		"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/motionwerkGmbH/msp-backend-api/configs"
 	"github.com/motionwerkGmbH/msp-backend-api/tools"
@@ -27,7 +26,7 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// allow all origins
-	router.Use(cors.Default())
+	//router.Use(cors.Default())
 
 	InitializeRoutes()
 
