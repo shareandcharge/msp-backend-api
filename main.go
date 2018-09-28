@@ -36,7 +36,7 @@ func main() {
 	tools.MySQLConnect("blockchain")
 
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-	log.Println("~~~~~~~~~~~ MSP BACKEND RUNNING v: 0.1 ~~~~~~~~~~~~~~~~~")
+	log.Println("~~~~~~~~~~~ MSP BACKEND RUNNING v: 0.1 Dev Branch~~~~~~~~~~~~~~~~~")
 	log.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 	// Serve 'em...
